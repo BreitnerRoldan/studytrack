@@ -1,9 +1,15 @@
 package com.ideapp.studytrack.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.passay.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.SecurityConfig;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +19,8 @@ import com.ideapp.studytrack.security.JwtService;
 import com.ideapp.studytrack.service.AuthService;
 import com.ideapp.studytrack.service.PasswordResetService;
 import com.ideapp.studytrack.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/api/users")
@@ -29,6 +37,8 @@ public class UserController {
 
 	@Autowired
 	private PasswordResetService passwordResetService;
+
+	private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
 	// Endpoint para registrar un nuevo usuario
 	@PostMapping("/register")
@@ -66,34 +76,87 @@ public class UserController {
 	}
 
 	@PostMapping("/reset-password")
-	@ResponseBody // Devuelve una respuesta JSON
-	public Map<String, String> resetPassword(@RequestParam("token") String token,
-			@RequestParam("newPassword") String newPassword, @RequestParam("confirmPassword") String confirmPassword) {
+	@ResponseBody
+	public Map<String, String> resetPassword(@RequestBody Map<String, String> requestBody) {
 
-		Map<String, String> response = new HashMap<>();
+		// Obtener el token del cuerpo de la solicitud
+		String token = requestBody.get("token");
 
-		// Validar que las contraseñas coincidan
-		if (!newPassword.equals(confirmPassword)) {
+		// Validar que el token no sea nulo ni vacío
+		if (token == null || token.isEmpty()) {
+			Map<String, String> response = new HashMap<>();
 			response.put("status", "error");
-			response.put("message", "Las contraseñas no coinciden.");
+			response.put("message", "El token es requerido.");
 			return response;
 		}
 
-		// Procesar el restablecimiento de contraseña
+		// Obtener las contraseñas del cuerpo de la solicitud
+		String newPassword = requestBody.get("newPassword");
+		String confirmPassword = requestBody.get("confirmPassword");
+
+		// Validar que las contraseñas coincidan y no estén vacías
+		if (newPassword == null || confirmPassword == null || !newPassword.equals(confirmPassword)) {
+			Map<String, String> response = new HashMap<>();
+			response.put("status", "error");
+			response.put("message", "Las contraseñas no coinciden o están vacías.");
+			return response;
+		}
+
+		// Validar la contraseña usando Passay
+		List<String> validationErrors = validatePassword(newPassword);
+		if (!validationErrors.isEmpty()) {
+			Map<String, String> response = new HashMap<>();
+			response.put("status", "error");
+			response.put("message", String.join(", ", validationErrors)); // Devuelve todos los mensajes de error
+			return response;
+		}
+
 		try {
+			// Procesar el restablecimiento de contraseña
 			passwordResetService.resetPassword(token, newPassword);
+
+			// Respuesta exitosa
+			Map<String, String> response = new HashMap<>();
 			response.put("status", "success");
 			response.put("message", "Contraseña restablecida exitosamente.");
 			return response;
+
 		} catch (RuntimeException e) {
+			// Capturar errores específicos lanzados por el servicio
+			Map<String, String> response = new HashMap<>();
 			response.put("status", "error");
 			response.put("message", e.getMessage());
 			return response;
 		} catch (Exception e) {
+			// Capturar errores inesperados
+			Map<String, String> response = new HashMap<>();
 			response.put("status", "error");
 			response.put("message", "Ocurrió un error inesperado. Por favor, intenta nuevamente.");
 			return response;
 		}
+	}
+
+	// Método para validar la contraseña usando Passay
+	private List<String> validatePassword(String password) {
+		// Definir las reglas para la contraseña
+		PasswordValidator validator = new PasswordValidator(List.of(new LengthRule(8, 50), // Longitud mínima y máxima
+				new CharacterRule(EnglishCharacterData.Digit, 1), // Al menos un número
+				new CharacterRule(EnglishCharacterData.UpperCase, 1), // Al menos una letra mayúscula
+				new CharacterRule(EnglishCharacterData.LowerCase, 1), // Al menos una letra minúscula
+				new CharacterRule(EnglishCharacterData.Special, 1), // Al menos un carácter especial
+				new WhitespaceRule() // No permitir espacios en blanco
+		));
+
+		// Validar la contraseña
+		RuleResult result = validator.validate(new PasswordData(password));
+
+		// Si hay errores, devolver los mensajes correspondientes
+		if (!result.isValid()) {
+			return validator.getMessages(result);
+		}
+
+		// Si no hay errores, devolver una lista vacía
+		return List.of();
 	}
 
 	@GetMapping("/reset-password")

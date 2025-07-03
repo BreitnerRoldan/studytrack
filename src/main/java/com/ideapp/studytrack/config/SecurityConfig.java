@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
             .csrf().disable() // Desactiva CSRF para simplificar las pruebas (puedes habilitarlo más tarde)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register", "/api/users/login", "/api/users/forgot-password", "/api/users/reset-password").permitAll() // Permite acceso público a estos endpoints
+                .requestMatchers("/api/users/register", "/api/users/login", "/api/users/forgot-password", "/api/users/reset-password", "/static/**").permitAll() // Permite acceso público a estos endpoints
                 .anyRequest().authenticated() // Protege todos los demás endpoints
             );
         return http.build();
