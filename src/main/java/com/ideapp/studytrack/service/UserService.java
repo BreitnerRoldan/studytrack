@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class UserService {
 
 	// Lista de extensiones de dominio permitidas
 	private static final List<String> ALLOWED_DOMAINS = Arrays.asList("com","gov", "org", "net", "edu", "co", "io");
+	private static final Logger logger = LogManager.getLogger(UserService.class);
 
 	// Método para registrar un nuevo usuario
 	public User registerUser(User user) {
@@ -35,6 +38,7 @@ public class UserService {
 
 		// Validar que el correo electrónico no esté duplicado
 		if (userRepository.existsByEmail(user.getEmail())) {
+			logger.info("Email: ", user.getEmail());
 			throw new RuntimeException("Email already exists");
 		}
 		
