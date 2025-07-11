@@ -54,7 +54,8 @@ public class UserService {
 	    email = email.trim();
 	    // Primera validación: Formato básico usando Apache Commons Validator
 	    if (!EmailValidator.getInstance().isValid(email)) {
-	        throw new RuntimeException("Invalid email format");
+	    	System.out.print("EMAIL:" + email);	        
+	    	throw new RuntimeException("Invalid email format");
 	    }
 	    // Segunda validación: Restringir extensiones de dominio
 	    String domain = email.substring(email.lastIndexOf('.') + 1).toLowerCase();
