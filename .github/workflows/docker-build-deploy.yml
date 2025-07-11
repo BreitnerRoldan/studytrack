@@ -60,6 +60,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+		  
+		  - name: Set lowercase repository name
+		    id: repo
+		    run: echo "REPO_LC=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
 		  - name: Build Docker image
 		    run: |
