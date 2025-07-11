@@ -60,15 +60,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-		  
-		  - name: Set lowercase repository name
-		    id: repo
-		    run: echo "REPO_LC=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
-		  - name: Build Docker image
-		    run: |
-		      docker build -t ghcr.io/${{ github.repository | toLower }}/my-java-service:latest .
+      - name: Set lowercase repository name
+        id: repo
+        run: echo "REPO_LC=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
-		  - name: Push Docker image
-		    run: |
-		      docker push ghcr.io/${{ github.repository | toLower }}/my-java-service:latest
+      - name: Build Docker image
+        run: |
+          docker build -t $REPO_LC/my-java-service:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push $REPO_LC/my-java-service:latest
