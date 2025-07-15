@@ -61,8 +61,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
 
-	  - name: Set lowercase namespace to your user
-	    run: echo "REPO_LC=ghcr.io/$(echo $GITHUB_REPOSITORY_OWNER | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Set lowercase namespace to your user
+        run: |
+          echo "REPO_LC=ghcr.io/$(echo $GITHUB_REPOSITORY_OWNER | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Build Docker image
         run: |
