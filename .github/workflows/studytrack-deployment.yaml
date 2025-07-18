@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: studytrack-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: studytrack
+  template:
+    metadata:
+      labels:
+        app: studytrack
+    spec:
+      containers:
+      - name: studytrack-container
+        image: ghcr.io/breitnerroldan/studytrack/my-java-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://postgres:5432/studytrack
+        - name: SPRING_DATASOURCE_USERNAME
+          value: postgres
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: postgres
+      imagePullSecrets:
+      - name: ghcr-secret  # 👈 este es el secret creado con el token de GitHub
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: studytrack-service
+spec:
+  type: NodePort
+  selector:
+    app: studytrack
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
