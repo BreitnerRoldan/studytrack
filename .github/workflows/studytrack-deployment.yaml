@@ -24,8 +24,6 @@ spec:
           value: postgres
         - name: SPRING_DATASOURCE_PASSWORD
           value: postgres
-      imagePullSecrets:
-      - name: ghcr-secret  # 👈 este es el secret creado con el token de GitHub
 
 ---
 apiVersion: v1
