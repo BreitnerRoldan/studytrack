@@ -22,7 +22,7 @@ import com.ideapp.studytrack.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 @RequestMapping("/api/users")
 public class UserController {
 
