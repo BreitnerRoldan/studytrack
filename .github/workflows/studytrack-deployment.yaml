@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: studytrack-container
-        image: docker pull ghcr.io/breitnerroldan/my-java-service:latest
+        image: ghcr.io/breitnerroldan/my-java-service:latest
         ports:
         - containerPort: 8080
         env:
