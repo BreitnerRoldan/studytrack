@@ -24,7 +24,7 @@ public class SecurityConfig {
             .httpBasic().disable()
             .formLogin().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register", "/api/users/login", "/api/users/forgot-password", "/api/users/reset-password", "/static/**").permitAll() // Permite acceso público a estos endpoints
+                .requestMatchers("/api/users/register", "/api/users/login", "/api/users/forgot-password", "/api/users/reset-password", "/api/cuenta/numerosCuenta", "/static/**").permitAll() // Permite acceso público a estos endpoints
                 .anyRequest().authenticated() // Protege todos los demás endpoints
             );
         return http.build();

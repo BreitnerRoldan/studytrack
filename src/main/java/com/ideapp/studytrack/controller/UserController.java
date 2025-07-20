@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.SecurityConfig;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.ideapp.studytrack.model.LoginRequest;
@@ -19,8 +18,6 @@ import com.ideapp.studytrack.security.JwtService;
 import com.ideapp.studytrack.service.AuthService;
 import com.ideapp.studytrack.service.PasswordResetService;
 import com.ideapp.studytrack.service.UserService;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/users")

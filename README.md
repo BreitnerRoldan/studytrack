@@ -18,6 +18,6 @@ Nota: Usar Java 21.
 }
 NOTA: No olvidar activar eL csrf para seguridad de la aplicacion.
 
-correo Gmail:
+correo Gmail: bjroldanlozano@gmail.com
 
 
