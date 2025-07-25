@@ -1,5 +1,6 @@
 package com.ideapp.studytrack.controller;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.ideapp.studytrack.model.LoginRequest;
 import com.ideapp.studytrack.model.User;
+import com.ideapp.studytrack.model.UserModel;
+import com.ideapp.studytrack.model.UserModelAssembler;
 import com.ideapp.studytrack.security.JwtService;
 import com.ideapp.studytrack.service.AuthService;
 import com.ideapp.studytrack.service.PasswordResetService;
@@ -34,6 +37,9 @@ public class UserController {
 
 	@Autowired
 	private PasswordResetService passwordResetService;
+	
+	@Autowired
+	private UserModelAssembler assembler;
 
 	private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -42,7 +48,9 @@ public class UserController {
 	public ResponseEntity<?> register(@RequestBody User user) {
 		try {
 			User registeredUser = userService.registerUser(user);
-			return ResponseEntity.ok("User registered successfully: " + registeredUser.getEmail());
+			UserModel resource = assembler.toModel(registeredUser);
+			
+			return ResponseEntity.ok(resource);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Error during registration: " + e.getMessage());
 		}

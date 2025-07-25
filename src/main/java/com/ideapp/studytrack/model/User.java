@@ -1,14 +1,14 @@
 package com.ideapp.studytrack.model;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends RepresentationModel<User>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
