@@ -12,6 +12,7 @@ import com.ideapp.studytrack.controller.UserController;
 @Component
 public class UserModelAssembler implements RepresentationModelAssembler<User, UserModel> {
 
+	//implementa HateOAS
 	@Override
 	public UserModel toModel(User user) {
 
